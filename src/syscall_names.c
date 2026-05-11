@@ -1,4 +1,4 @@
-#include "syscall_names.h"
+#include "../include/syscall_names.h"
 
 #include <string.h>
 #include <sys/syscall.h>

@@ -1,0 +1,17 @@
+Ola. Eu e meu querido parceiro de grupo fizemos as seguintes modificacoes no projeto referente a exploracao e ao desbravamento do codigo:
+
+A uma primeira vista, apenas lemos quase todos os arquivos para ter uma ideia do que o codigo esta fazendo. Nao entendemos muita coisa, mas nos familiarizamos com os arquivos existentes, as structs que estao e cada um deles, e demos uma boa olhada no main.c
+
+
+ - MODIFICACOES:
+    apenas corrigimos o caminho de importacao das bibliotecas usadas ao longo dos arquivos. Basicamentes incluimos o '../include' antes do nome dos arquivos de fato.
+       
+
+Para o futuro, iremos continuar analisando o codigo e nos preparar para a implementacao de fato da semana 2.
+
+11/05
+                      - Ass
+                          Pedro Cardoso e Guillermo Silva Amadio
+
+
+

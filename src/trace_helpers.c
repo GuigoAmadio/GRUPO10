@@ -1,4 +1,4 @@
-#include "trace_helpers.h"
+#include "../include/trace_helpers.h"
 
 #include <errno.h>
 #include <stddef.h>

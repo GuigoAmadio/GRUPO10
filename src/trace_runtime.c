@@ -1,4 +1,4 @@
-#include "trace_runtime.h"
+#include "../include/trace_runtime.h"
 
 #include <errno.h>
 #include <signal.h>

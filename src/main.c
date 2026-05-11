@@ -1,6 +1,6 @@
-#include "cli.h"
-#include "student_api.h"
-#include "trace_runtime.h"
+#include "../include/cli.h"
+#include "../include/student_api.h"
+#include "../include/trace_runtime.h"
 
 #include <stdio.h>
 

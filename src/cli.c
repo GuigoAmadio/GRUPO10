@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "../include/cli.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,9 +6,7 @@
 
 static int find_separator(int argc, char **argv)
 {
-    int i;
-
-    for (i = 1; i < argc; i++) {
+    for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--") == 0) {
             return i;
         }

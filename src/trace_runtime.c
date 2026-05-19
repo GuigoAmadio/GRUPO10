@@ -36,37 +36,54 @@ static void fill_event_from_regs(pid_t pid,
 
 static pid_t launch_tracee(char *const argv[])
 {
-    /*
-     * TODO Semana 2:
-     *
-     * Crie o processo monitorado.
-     *
-     * Fluxo esperado:
-     * - fork()
-     * - no filho:
-     *   - ptrace(PTRACE_TRACEME, ...)
-     *   - raise(SIGSTOP)
-     *   - execvp(argv[0], argv)
-     * - no pai:
-     *   - retornar o pid do filho
-     *
-     * Em erro, imprima uma mensagem com perror() e retorne -1.
-     */
-    fprintf(stderr, "erro: TODO Semana 2: implementar launch_tracee()\n");
-    return -1;
+    pid_t pid;
+
+    pid = fork();
+
+    if (pid < 0) {
+        perror("erro ao criar fork");
+        return -1;
+    }
+
+    if (pid == 0) {
+        // estamos no filho ----
+
+        // 1. Informa ao Kernel que o processo pai vai monitorá-lo
+        if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0) {
+            perror("ptrace(PTRACE_TRACEME)");
+            _exit(1);
+        }
+
+        // 2. Envia um sinal de paragem para si mesmo para que o pai possa se conectar
+        raise(SIGSTOP);
+
+        // 3. Substitui a imagem do processo atual pelo programa alvo
+        execvp(argv[0], argv);
+
+        // Se o execvp retornar, significa que ocorreu um erro (ex: comando não encontrado)
+        perror("execvp");
+        _exit(1);
+    }
+
+    // estamos no pai ----
+    // retorna o pid do filho.
+    return pid;
 }
 
 static int wait_for_initial_stop(pid_t child)
 {
-    /*
-     * TODO Semana 2:
-     *
-     * O filho chama raise(SIGSTOP) antes de executar o programa alvo.
-     * O pai precisa esperar essa parada inicial com waitpid().
-     *
-     * Retorne 0 se o filho parou como esperado, -1 em erro.
-     */
-    fprintf(stderr, "erro: TODO Semana 2: implementar wait_for_initial_stop()\n");
+    int status;
+
+    if (waitpid(child, &status, 0) < 0) {
+        perror("waitpid");
+        return -1;
+    }
+
+    if (WIFSTOPPED(status) && WSTOPSIG(status) == SIGSTOP) {
+        return 0;  
+
+  }
+
     return -1;
 }
 
@@ -139,7 +156,7 @@ int trace_program(char *const argv[],
     if (wait_for_initial_stop(child) < 0) {
         return -1;
     }
-
+// ---------------------------------------------------------------------------
     if (configure_trace_options(child) < 0) {
         return -1;
     }

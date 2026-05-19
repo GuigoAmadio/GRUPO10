@@ -48,19 +48,15 @@ static pid_t launch_tracee(char *const argv[])
     if (pid == 0) {
         // estamos no filho ----
 
-        // 1. Informa ao Kernel que o processo pai vai monitorá-lo
         if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0) {
             perror("ptrace(PTRACE_TRACEME)");
             _exit(1);
         }
 
-        // 2. Envia um sinal de paragem para si mesmo para que o pai possa se conectar
         raise(SIGSTOP);
 
-        // 3. Substitui a imagem do processo atual pelo programa alvo
         execvp(argv[0], argv);
 
-        // Se o execvp retornar, significa que ocorreu um erro (ex: comando não encontrado)
         perror("execvp");
         _exit(1);
     }

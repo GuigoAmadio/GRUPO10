@@ -18,20 +18,20 @@ static void fill_event_from_regs(pid_t pid,
                                  const struct user_regs_struct *regs,
                                  struct syscall_event *ev)
 {
-    /*
-     * TODO Semana 4:
-     *
-     * Preencha struct syscall_event usando os registradores x86_64.
-     *
-     * Dicas:
-     * - regs->orig_rax contem o numero da syscall.
-     * - regs->rax contem o retorno, valido na saida.
-     * - os seis argumentos ficam em rdi, rsi, rdx, r10, r8 e r9.
-     * - ev->entering deve copiar o parametro entering.
-     */
     memset(ev, 0, sizeof(*ev));
     ev->pid = pid;
     ev->entering = entering;
+    ev->syscall_no = (long)regs->orig_rax;
+    if (entering) {
+        ev->args[0] = (unsigned long)regs->rdi;
+        ev->args[1] = (unsigned long)regs->rsi;
+        ev->args[2] = (unsigned long)regs->rdx;
+        ev->args[3] = (unsigned long)regs->r10;
+        ev->args[4] = (unsigned long)regs->r8;
+        ev->args[5] = (unsigned long)regs->r9;
+    } else {
+        ev->ret = (long)regs->rax;
+    }
 }
 
 static pid_t launch_tracee(char *const argv[])
@@ -184,13 +184,11 @@ int trace_program(char *const argv[],
             return 0;
         }
 
-        /*
-         * TODO Semana 4:
-         *
-         * Use PTRACE_GETREGS para preencher regs.
-         * Depois chame fill_event_from_regs() e observer().
-         */
         memset(&regs, 0, sizeof(regs));
+        if (ptrace(PTRACE_GETREGS, child, NULL, &regs) < 0) {
+            perror("ptrace(PTRACE_GETREGS)");
+            return -1;
+        }
         fill_event_from_regs(child, entering, &regs, &ev);
         if (observer != NULL) {
             observer(&ev, userdata);
